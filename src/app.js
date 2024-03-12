@@ -14,7 +14,11 @@ app.use(logger('dev'));
 app.use(express.static('public'))
 app.use(favicon(__dirname + '/public/favicon.ico'));
 
+//routes import
+const userRoutes = require('./routes/users');
+
+
 // routes
-app.use('/api/v1', mainRouter);
+app.use('/api/v1', mainRouter, userRoutes);
 
 module.exports = app;
