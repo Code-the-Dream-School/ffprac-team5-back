@@ -1,5 +1,5 @@
-const Recipe = require("../models/Recipe");
-const User = require("../models/User");
+const Recipe = require("../models/recipe");
+const User = require("../models/user");
 const { StatusCodes } = require("http-status-codes");
 const { BadRequestError, NotFoundError } = require("../errors");
 
