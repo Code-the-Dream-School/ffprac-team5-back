@@ -8,7 +8,7 @@ const {
   getRecipe,
   deleteRecipe,
   updateRecipe,
-} = require("../controllers/recipe");
+} = require("../controllers/recipeController");
 
 router.route("/recipe/:id").post(createRecipe);
 router.route("/receipe/search").get(searchRecipes);

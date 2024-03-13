@@ -3,7 +3,11 @@ const User = require("../models/User");
 const { StatusCodes } = require("http-status-codes");
 const { BadRequestError, NotFoundError } = require("../errors");
 
-const searchRecipe = async (req, res) => {
+const createRecipe = async (req, res) => {
+  res.status(StatusCodes.OK).json({ recipes });
+};
+
+const searchRecipes = async (req, res) => {
   const {
     params: { term: searchterm },
   } = req;
@@ -21,4 +25,24 @@ const searchRecipe = async (req, res) => {
   }
   console.log(recipes);
   res.status(StatusCodes.OK).json({ recipes });
+};
+
+const getRecipe = async (req, res) => {
+  res.status(StatusCodes.OK).json({ recipes });
+};
+
+const deleteRecipe = async (req, res) => {
+  res.status(StatusCodes.OK).json({ recipes });
+};
+
+const updateRecipe = async (req, res) => {
+  res.status(StatusCodes.OK).json({ recipes });
+};
+
+module.exports = {
+  createRecipe,
+  searchRecipes,
+  getRecipe,
+  deleteRecipe,
+  updateRecipe,
 };

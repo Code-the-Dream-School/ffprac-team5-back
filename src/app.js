@@ -3,6 +3,7 @@ const app = express();
 const cors = require("cors");
 const favicon = require("express-favicon");
 const logger = require("morgan");
+require("dotenv").config();
 
 //swagger
 const swagger = require("swagger-ui-express");
@@ -16,6 +17,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(logger("dev"));
 app.use(express.static("public"));
 app.use(favicon(__dirname + "/public/favicon.ico"));
+
+//routes import
+const userRouter = require("./routes/userRouter");
+const recipeRouter = require("./routes/recipeRouter");
 
 // routes
 app.use("/api/v1", mainRouter);
