@@ -1,10 +1,18 @@
 const mongoose = require("mongoose");
 const RecipeSchema = new mongoose.Schema(
   {
-    name: String,
-    howtoprepare: String,
-    ingredients: [String],
-    dietlabels: [String],
+    name: {
+      type: String,
+    },
+    preperation: {
+      type: String,
+    },
+    ingredients: {
+      type: [String],
+    },
+    dietarylabels: {
+      type: [String],
+    },
   },
   { timestamps: true }
 );
