@@ -10,12 +10,8 @@ const {
   updateRecipe,
 } = require("../controllers/recipeController");
 
-router.route("/recipe/:id").post(createRecipe);
-router.route("/receipe/search").get(searchRecipes);
-router
-  .route("/recipe/:id")
-  .get(getRecipe)
-  .delete(deleteRecipe)
-  .patch(updateRecipe);
+router.route("/:id").post(createRecipe);
+router.route("/search").get(searchRecipes);
+router.route("/:id").get(getRecipe).delete(deleteRecipe).patch(updateRecipe);
 
 module.exports = router;

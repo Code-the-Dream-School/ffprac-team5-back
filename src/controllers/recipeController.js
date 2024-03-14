@@ -9,21 +9,23 @@ const createRecipe = async (req, res) => {
 
 const searchRecipes = async (req, res) => {
   const {
-    params: { term: searchterm },
+    query: { term: searchterm },
   } = req;
-  const queryRegx = new RegExp(params.term, "i");
+  const queryRegx = new RegExp(searchterm, "i");
   const recipes = await Recipe.find({
     $or: [
-      { howtoprepare: { $regex: queryRegx } },
+      { preperation: { $regex: queryRegx } },
       { ingredients: { $regex: queryRegx } },
-      { dietlabels: { $regex: queryRegx } },
+      { dietarylabels: { $regex: queryRegx } },
     ],
-  }).toArray();
+  });
+  if (recipes && recipes.length > 0) {
+    recipes = recipes.toArray();
+  }
 
   if (!recipes) {
     throw new NotFoundError(` No Recipe with term ${params.term}`);
   }
-  console.log(recipes);
   res.status(StatusCodes.OK).json({ recipes });
 };
 
