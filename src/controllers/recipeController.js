@@ -18,37 +18,25 @@ const searchRecipes = async (req, res) => {
     const {
       query: { term: searchterm },
     } = req;
-    //const queryRegx = new RegExp(searchterm, "i");
-    // const recipes = await Recipe.find({
-    //   $or: [
-    //     { preperation: { $regex: queryRegx } },
-    //     { ingredients: { $regex: queryRegx } },
-    //     { dietarylabels: { $regex: queryRegx } },
-    //   ],
-    // });
-    // await Recipe.ensureIndex({
-    //   preperation: "text",
-    //   ingredients: "text",
-    //   dietarylabels: "text",
-    // });
-    // let recipes = await Recipe.find({ $text: { $search: searchterm } });
-    // if (recipes && recipes.length > 0) {
-    //   console.log(recipes);
-    //   //recipes = recipes.toArray();
-    // }
-    // let recipes = await Recipe.aggregate([
-    //   {
-    //     $search: {
-    //       phrase: {
-    //         query: searchterm.split(" "),
-    //         path: ["preperation", "ingredients"],
-    //       },
-    //     },
-    //   },
-    // ]);
-    let recipes = await Recipe.aggregate([
-      { $match: { $text: { $search: searchterm } } },
+
+    const ingredients = searchterm.split(' ').map(term => term.trim());
+
+    const regex = new RegExp(ingredients.join('|'), 'i');
+    
+    const recipes = await Recipe.aggregate([
+      { $match: { ingredients: { $regex: regex } } },
+      {
+        $addFields: {
+          matchCount: {
+            $size: {
+              $setIntersection: ['$ingredients', ingredients]
+            }
+          }
+        }
+      },
+      { $sort: { matchCount: -1 } }
     ]);
+
     //let recipes = await Recipe.find({ $or: QStringIng.concat(QStringDiet) });
 
     if (!recipes) {
