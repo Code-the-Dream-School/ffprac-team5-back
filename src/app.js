@@ -1,20 +1,32 @@
-const express = require('express');
+const express = require("express");
 const app = express();
-const cors = require('cors')
-const favicon = require('express-favicon');
-const logger = require('morgan');
+const cors = require("cors");
+const favicon = require("express-favicon");
+const logger = require("morgan");
+require("dotenv").config();
 
-const mainRouter = require('./routes/mainRouter.js');
+//swagger
+const swagger = require("swagger-ui-express");
+
+const mainRouter = require("./routes/mainRouter.js");
 
 // middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(logger('dev'));
-app.use(express.static('public'))
-app.use(favicon(__dirname + '/public/favicon.ico'));
+app.use(logger("dev"));
+app.use(express.static("public"));
+app.use(favicon(__dirname + "/public/favicon.ico"));
+
+//routes import
+const userRouter = require("./routes/userRouter");
+const recipeRouter = require("./routes/recipeRouter");
+const authRouter = require("./routes/authRouter");
 
 // routes
-app.use('/api/v1', mainRouter);
+app.use("/api/v1", mainRouter);
+app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/user", userRouter);
+app.use("/api/v1/recipe", recipeRouter);
 
 module.exports = app;
