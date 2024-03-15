@@ -21,9 +21,11 @@ app.use(favicon(__dirname + "/public/favicon.ico"));
 //routes import
 const userRouter = require("./routes/userRouter");
 const recipeRouter = require("./routes/recipeRouter");
+const authRouter = require("./routes/authRouter");
 
 // routes
 app.use("/api/v1", mainRouter);
+app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/recipe", recipeRouter);
 

@@ -9,62 +9,73 @@ const createRecipe = async (req, res) => {
     res.status(StatusCodes.CREATED).json({ recipe });
   } catch (e) {
     console.log(e);
+    res.status(500).json({ msg: "Could not save recipe" });
   }
 };
 
 const searchRecipes = async (req, res) => {
-  const {
-    query: { term: searchterm },
-  } = req;
-  //const queryRegx = new RegExp(searchterm, "i");
-  // const recipes = await Recipe.find({
-  //   $or: [
-  //     { preperation: { $regex: queryRegx } },
-  //     { ingredients: { $regex: queryRegx } },
-  //     { dietarylabels: { $regex: queryRegx } },
-  //   ],
-  // });
-  // await Recipe.ensureIndex({
-  //   preperation: "text",
-  //   ingredients: "text",
-  //   dietarylabels: "text",
-  // });
-  // let recipes = await Recipe.find({ $text: { $search: searchterm } });
-  // if (recipes && recipes.length > 0) {
-  //   console.log(recipes);
-  //   //recipes = recipes.toArray();
-  // }
-  // let recipes = await Recipe.aggregate([
-  //   {
-  //     $search: {
-  //       phrase: {
-  //         query: searchterm.split(" "),
-  //         path: ["preperation", "ingredients"],
-  //       },
-  //     },
-  //   },
-  // ]);
-  let recipes = await Recipe.aggregate([
-    { $match: { $text: { $search: searchterm } } },
-  ]);
-  //let recipes = await Recipe.find({ $or: QStringIng.concat(QStringDiet) });
+  try {
+    const {
+      query: { term: searchterm },
+    } = req;
+    //const queryRegx = new RegExp(searchterm, "i");
+    // const recipes = await Recipe.find({
+    //   $or: [
+    //     { preperation: { $regex: queryRegx } },
+    //     { ingredients: { $regex: queryRegx } },
+    //     { dietarylabels: { $regex: queryRegx } },
+    //   ],
+    // });
+    // await Recipe.ensureIndex({
+    //   preperation: "text",
+    //   ingredients: "text",
+    //   dietarylabels: "text",
+    // });
+    // let recipes = await Recipe.find({ $text: { $search: searchterm } });
+    // if (recipes && recipes.length > 0) {
+    //   console.log(recipes);
+    //   //recipes = recipes.toArray();
+    // }
+    // let recipes = await Recipe.aggregate([
+    //   {
+    //     $search: {
+    //       phrase: {
+    //         query: searchterm.split(" "),
+    //         path: ["preperation", "ingredients"],
+    //       },
+    //     },
+    //   },
+    // ]);
+    let recipes = await Recipe.aggregate([
+      { $match: { $text: { $search: searchterm } } },
+    ]);
+    //let recipes = await Recipe.find({ $or: QStringIng.concat(QStringDiet) });
 
-  if (!recipes) {
-    throw new NotFoundError(` No Recipe with term ${params.term}`);
+    if (!recipes) {
+      throw new NotFoundError(` No Recipe with term ${params.term}`);
+    }
+    res.status(StatusCodes.OK).json({ recipes });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ msg: "Could not fetch recipes" });
   }
-  res.status(StatusCodes.OK).json({ recipes });
 };
 
 const getRecipe = async (req, res) => {
-  const {
-    params: { id: recipeId },
-  } = req;
-  const recipe = await Recipe.findById(recipeId);
+  try {
+    const {
+      params: { id: recipeId },
+    } = req;
+    const recipe = await Recipe.findById(recipeId);
 
-  if (!recipe) {
-    throw new NotFoundError(` No recipe with id ${recipeId}`);
+    if (!recipe) {
+      throw new NotFoundError(` No recipe with id ${recipeId}`);
+    }
+    res.status(StatusCodes.OK).json({ recipe });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ msg: "Could not fetch recipes" });
   }
-  res.status(StatusCodes.OK).json({ recipe });
 };
 
 const deleteRecipe = async (req, res) => {
@@ -79,6 +90,7 @@ const deleteRecipe = async (req, res) => {
     res.status(StatusCodes.OK).json({ msg: "The entry was deleted." });
   } catch (e) {
     console.log(e);
+    res.status(500).json({ msg: "Deletion failed" });
   }
 };
 
@@ -109,6 +121,7 @@ const updateRecipe = async (req, res) => {
     res.status(StatusCodes.OK).json({ recipe });
   } catch (e) {
     console.log(e);
+    res.status(500).json({ msg: "Update failed" });
   }
 };
 

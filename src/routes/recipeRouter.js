@@ -1,5 +1,5 @@
 const express = require("express");
-
+const { auth } = require("../middleware/authentication");
 const router = express.Router();
 
 const {
@@ -10,8 +10,12 @@ const {
   updateRecipe,
 } = require("../controllers/recipeController");
 
-router.route("/").post(createRecipe);
+router.route("/").post(auth, createRecipe);
 router.route("/search").get(searchRecipes);
-router.route("/:id").get(getRecipe).delete(deleteRecipe).patch(updateRecipe);
+router
+  .route("/:id")
+  .get(getRecipe)
+  .delete(auth, deleteRecipe)
+  .patch(auth, updateRecipe);
 
 module.exports = router;

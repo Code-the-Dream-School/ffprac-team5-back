@@ -1,37 +1,53 @@
 const User = require("../models/user");
 const { StatusCodes } = require("http-status-codes");
-const { BadRequestError, UnauthenticatedError } = require("../errors");
+const {
+  BadRequestError,
+  UnauthenticatedError,
+  CustomAPIError,
+} = require("../errors");
 
 const jwt = require("jsonwebtoken");
 const register = async (req, res) => {
-  const { name, email, password } = req.body;
-  if (!name || !email || !password)
-    throw new BadRequestError("Please provide name,email and password");
+  try {
+    const { name, email, password } = req.body;
+    if (!name || !email || !password)
+      throw new BadRequestError("Please provide name,email and password");
 
-  const user = await User.create({ ...req.body });
+    const user = await User.create({ ...req.body });
 
-  const token = await user.createJWT();
-  res.status(StatusCodes.CREATED).json({
-    user: { name: user.getName() },
-    token,
-    message: "Registered successfully",
-  });
+    const token = await user.createJWT();
+    res.status(StatusCodes.CREATED).json({
+      user: { name: user.getName() },
+      token,
+      message: "Registered successfully",
+    });
+  } catch (e) {
+    //throw new CustomAPIError("Unable to signup");
+    console.log(e);
+    res.status(500).json({ msg: "Unable to signup" });
+  }
 };
 
 const login = async (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    throw new BadRequestError("Please provide email and password");
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      throw new BadRequestError("Please provide email and password");
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user)
+      throw new UnauthenticatedError("Please provide valid credentials");
+    const isPasswordCorrect = await user.comparePassword(password);
+    if (!isPasswordCorrect)
+      throw new UnauthenticatedError("Please provide valid credentials");
+    const token = await user.createJWT();
+    res.status(StatusCodes.OK).json({ user: { name: user.name }, token });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ msg: "Unable to login" });
   }
-
-  const user = await User.findOne({ email });
-
-  if (!user) throw new UnauthenticatedError("Please provide valid credentials");
-  const isPasswordCorrect = await user.comparePassword(password);
-  if (!isPasswordCorrect)
-    throw new UnauthenticatedError("Please provide valid credentials");
-  const token = await user.createJWT();
-  res.status(StatusCodes.OK).json({ user: { name: user.name }, token });
 };
 
 const getMe = async (req, res, next) => {
@@ -45,10 +61,12 @@ const getMe = async (req, res, next) => {
     //attach user to job routes
     const user = await User.findById(payload.userId).select("-password");
     res
-      .status(StatusCodes.CREATED)
+      .status(StatusCodes.OK)
       .json({ user: { name: user.getName(), isadmin: user.isadmin }, token });
   } catch (error) {
-    throw new UnauthenticatedError("Authentication invalid");
+    //throw new UnauthenticatedError("Authentication invalid");
+    console.log(error);
+    res.status(500).json({ msg: "Authentication invalid" });
   }
 };
 
