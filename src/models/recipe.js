@@ -16,5 +16,9 @@ const RecipeSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
+RecipeSchema.index({
+  preperation: "text",
+  ingredients: "text",
+  dietarylabels: "text",
+});
 module.exports = mongoose.model("recipe", RecipeSchema);
