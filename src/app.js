@@ -29,6 +29,6 @@ app.use("/api/v1", mainRouter);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/recipe", recipeRouter);
-app.use("/api/v1/recipe", ingredientRouter);
+app.use("/api/v1/ingredients", ingredientRouter);
 
 module.exports = app;

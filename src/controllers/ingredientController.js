@@ -4,7 +4,7 @@ const Ingredients = require("../models/ingredient");
 
 const getIngredients = async(req, res) => {
     try {
-        ingredients = await Ingredients.find()
+        const ingredients = await Ingredients.find()
         res.status(StatusCodes.OK).json(ingredients);
     } catch (error) {
         console.log(e);
@@ -13,4 +13,4 @@ const getIngredients = async(req, res) => {
 
 }
 
-module.exports = { getIngredients };
+module.exports = getIngredients;
