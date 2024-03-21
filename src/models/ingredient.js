@@ -7,6 +7,9 @@ const ingredientSchema = new mongoose.Schema(
         number: {
             type: Number
         },
+        unit: {
+            type: String
+        },
     }   
 )
 
