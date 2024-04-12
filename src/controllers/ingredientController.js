@@ -14,5 +14,18 @@ const getIngredients = async(req, res) => {
 
 }
 
+const addIngredients = async (req, res) => {
+    try {
+        Term = req.query.name
+        const ingredients = await Ingredients.create( {name: Term})
+        res.status(StatusCodes.OK).json(ingredients);
+    } catch (error) {
+        console.log(error);
+    }
+}
 
-module.exports = getIngredients;
+
+module.exports = {
+    getIngredients, 
+    addIngredients
+};

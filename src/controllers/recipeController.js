@@ -16,15 +16,22 @@ const createRecipe = async (req, res) => {
 const searchRecipes = async (req, res) => {
   try {
     const {
-      query: { term: searchterm },
+      query: { term: searchterm, filter: filterterm },
     } = req;
 
+    console.log(req.query)
     const ingredients = searchterm.split(' ').map(term => term.trim());
 
     const regex = new RegExp(ingredients.join('|'), 'i');
     
+    const matchCriteria = { ingredients: { $regex: regex } };
+
+    if (filterterm) {
+      matchCriteria.dietarylabels = { $nin: [filterterm] };
+    }
+
     const recipes = await Recipe.aggregate([
-      { $match: { ingredients: { $regex: regex } } },
+      { $match: matchCriteria },
       {
         $addFields: {
           matchCount: {
@@ -37,12 +44,13 @@ const searchRecipes = async (req, res) => {
       { $sort: { matchCount: -1 } }
     ]);
 
-    //let recipes = await Recipe.find({ $or: QStringIng.concat(QStringDiet) });
-
-    if (!recipes) {
-      throw new NotFoundError(` No Recipe with term ${params.term}`);
-    }
-    res.status(StatusCodes.OK).json({ recipes });
+  if (recipes.length === 0) {
+    res.status(StatusCodes.OK).json( {msg: "No recipes found"});
+    throw new NotFoundError(`No recipes found with the search term '${searchterm}'`);
+  }
+  
+  res.status(StatusCodes.OK).json({ recipes });
+    
   } catch (e) {
     console.log(e);
     res.status(500).json({ msg: "Could not fetch recipes" });
