@@ -16,45 +16,41 @@ const createRecipe = async (req, res) => {
 const searchRecipes = async (req, res) => {
   try {
     const {
-      query: { term: searchterm },
+      query: { term: searchterm, filter: filterterm },
     } = req;
-    //const queryRegx = new RegExp(searchterm, "i");
-    // const recipes = await Recipe.find({
-    //   $or: [
-    //     { preperation: { $regex: queryRegx } },
-    //     { ingredients: { $regex: queryRegx } },
-    //     { dietarylabels: { $regex: queryRegx } },
-    //   ],
-    // });
-    // await Recipe.ensureIndex({
-    //   preperation: "text",
-    //   ingredients: "text",
-    //   dietarylabels: "text",
-    // });
-    // let recipes = await Recipe.find({ $text: { $search: searchterm } });
-    // if (recipes && recipes.length > 0) {
-    //   console.log(recipes);
-    //   //recipes = recipes.toArray();
-    // }
-    // let recipes = await Recipe.aggregate([
-    //   {
-    //     $search: {
-    //       phrase: {
-    //         query: searchterm.split(" "),
-    //         path: ["preperation", "ingredients"],
-    //       },
-    //     },
-    //   },
-    // ]);
-    let recipes = await Recipe.aggregate([
-      { $match: { $text: { $search: searchterm } } },
-    ]);
-    //let recipes = await Recipe.find({ $or: QStringIng.concat(QStringDiet) });
 
-    if (!recipes) {
-      throw new NotFoundError(` No Recipe with term ${params.term}`);
+    console.log(req.query)
+    const ingredients = searchterm.split(' ').map(term => term.trim());
+
+    const regex = new RegExp(ingredients.join('|'), 'i');
+    
+    const matchCriteria = { ingredients: { $regex: regex } };
+
+    if (filterterm) {
+      matchCriteria.dietarylabels = { $nin: [filterterm] };
     }
-    res.status(StatusCodes.OK).json({ recipes });
+
+    const recipes = await Recipe.aggregate([
+      { $match: matchCriteria },
+      {
+        $addFields: {
+          matchCount: {
+            $size: {
+              $setIntersection: ['$ingredients', ingredients]
+            }
+          }
+        }
+      },
+      { $sort: { matchCount: -1 } }
+    ]);
+
+  if (recipes.length === 0) {
+    res.status(StatusCodes.OK).json( {msg: "No recipes found"});
+    throw new NotFoundError(`No recipes found with the search term '${searchterm}'`);
+  }
+  
+  res.status(StatusCodes.OK).json({ recipes });
+    
   } catch (e) {
     console.log(e);
     res.status(500).json({ msg: "Could not fetch recipes" });
