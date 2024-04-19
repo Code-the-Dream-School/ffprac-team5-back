@@ -45,12 +45,11 @@ const searchRecipes = async (req, res) => {
     ]);
 
   if (recipes.length === 0) {
-    res.status(StatusCodes.OK).json( {msg: "No recipes found"});
-    throw new NotFoundError(`No recipes found with the search term '${searchterm}'`);
+    return res.status(StatusCodes.OK).json({ msg: "No recipes found" });
   }
-  
+
   res.status(StatusCodes.OK).json({ recipes });
-    
+  
   } catch (e) {
     console.log(e);
     res.status(500).json({ msg: "Could not fetch recipes" });
