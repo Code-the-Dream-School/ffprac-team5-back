@@ -13,6 +13,17 @@ const createRecipe = async (req, res) => {
   }
 };
 
+const getAllRecipes = async (req,res) => {
+  try{
+    const recipes = await Recipe.find({});
+    res.json({recipes})
+  } catch (e) {
+    console.log(e)
+    res.status(500).json({msg: "nothing here"})
+  }
+
+}
+
 const searchRecipes = async (req, res) => {
   try {
     const {
@@ -20,6 +31,7 @@ const searchRecipes = async (req, res) => {
     } = req;
 
     console.log(req.query)
+    
     const ingredients = searchterm.split(' ').map(term => term.trim());
 
     const regex = new RegExp(ingredients.join('|'), 'i');
@@ -49,7 +61,7 @@ const searchRecipes = async (req, res) => {
   }
 
   res.status(StatusCodes.OK).json({ recipes });
-  
+
   } catch (e) {
     console.log(e);
     res.status(500).json({ msg: "Could not fetch recipes" });
@@ -124,6 +136,7 @@ module.exports = {
   createRecipe,
   searchRecipes,
   getRecipe,
+  getAllRecipes,
   deleteRecipe,
   updateRecipe,
 };
