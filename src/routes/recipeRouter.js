@@ -6,11 +6,13 @@ const {
   createRecipe,
   searchRecipes,
   getRecipe,
+  getAllRecipes,
   deleteRecipe,
   updateRecipe,
 } = require("../controllers/recipeController");
 
 router.route("/").post(auth, createRecipe);
+router.route("/").get(getAllRecipes);
 router.route("/search").get(searchRecipes);
 router
   .route("/:id")
