@@ -22,9 +22,10 @@ app.use(favicon(__dirname + "/public/favicon.ico"));
 const userRouter = require("./routes/userRouter");
 const recipeRouter = require("./routes/recipeRouter");
 const authRouter = require("./routes/authRouter");
-const ingredientRouter = require("./routes/ingredientRouter.js")
+const ingredientRouter = require("./routes/ingredientRouter.js");
 
 // routes
+app.use("/", mainRouter);
 app.use("/api/v1", mainRouter);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", userRouter);
