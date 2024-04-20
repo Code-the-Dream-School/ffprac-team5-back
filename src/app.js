@@ -23,6 +23,7 @@ const authRouter = require("./routes/authRouter");
 const ingredientRouter = require("./routes/ingredientRouter.js");
 
 const mainRouter = require("./routes/mainRouter.js");
+const { NotFoundError } = require("./errors");
 // routes
 app.get("/", (req, res) => {
   res.status(200).json({
@@ -34,5 +35,9 @@ app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/recipe", recipeRouter);
 app.use("/api/v1/ingredients", ingredientRouter);
+//catch all else route
+app.use("*", (_, res) => {
+  res.status(404).send("Not Found");
+});
 
 module.exports = app;
