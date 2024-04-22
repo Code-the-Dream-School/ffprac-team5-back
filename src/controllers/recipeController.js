@@ -32,7 +32,7 @@ const searchRecipes = async (req, res) => {
 
     console.log(req.query)
     
-    const ingredients = searchterm.split(' ').map(term => term.trim());
+    const ingredients = searchterm.split(',').map(term => term.trim());
 
     const regex = new RegExp(ingredients.join('|'), 'i');
     
